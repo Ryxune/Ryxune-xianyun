@@ -53,6 +53,7 @@ export default {
         // 用户退出
         handleLogout(){
             this.$store.commit("user/setUserInfo",{});
+            this.$message.success("退出成功");
         },
     }
 }
