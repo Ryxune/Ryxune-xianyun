@@ -104,8 +104,9 @@ export default {
         v.value = v.name.replace("市", "");
         return v;
       });
-      this.selectFirst = newData[0];
-
+      if (newData.length > 0) {
+        this.selectFirst = newData[0];
+      }
       cb(newData);
     },
 
@@ -136,7 +137,7 @@ export default {
 
     // 触发和目标城市切换时触发
     handleReverse() {
-      let { destCity,destCode } = this.form;
+      let { destCity, destCode } = this.form;
       this.form.destCity = this.form.departCity;
       this.form.destCode = this.form.departCode;
       this.form.departCity = destCity;
@@ -145,7 +146,6 @@ export default {
 
     // 提交表单是触发
     handleSubmit() {
-      console.log(this.form);
       let rules = {
         departCity: {
           message: "请输入出发城市",
@@ -158,16 +158,27 @@ export default {
         departDate: {
           message: "请输入出发时间",
           value: this.form.departDate
+        },
+        destCode: {
+          message: "请输入正确的目标城市",
+          value: this.form.destCode
+        },
+        departCode: {
+          message: "请输入正确的出发城市",
+          value: this.form.departCode
         }
       };
 
-      Object.keys(rules).some(v => {
+      let res = Object.keys(rules).some(v => {
         let { message, value } = rules[v];
         if (!value) {
           this.$message.error(message);
           return true;
         }
       });
+      if(!res) {
+        console.log(this.form);
+      }
     }
   },
   mounted() {}
