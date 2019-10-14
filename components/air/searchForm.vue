@@ -38,7 +38,13 @@
       </el-form-item>
       <el-form-item label="出发时间">
         <!-- change 用户确认选择日期时触发 -->
-        <el-date-picker type="date" placeholder="请选择日期" style="width: 100%;" @change="handleDate" v-model="form.departDate"></el-date-picker>
+        <el-date-picker
+          type="date"
+          placeholder="请选择日期"
+          style="width: 100%;"
+          @change="handleDate"
+          v-model="form.departDate"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item label>
         <el-button style="width:100%;" type="primary" icon="el-icon-search" @click="handleSubmit">搜索</el-button>
@@ -51,7 +57,7 @@
 </template>
 
 <script>
-import moment from 'moment';
+import moment from "moment";
 export default {
   data() {
     return {
@@ -72,7 +78,14 @@ export default {
   },
   methods: {
     // tab切换时触发
-    handleSearchTab(item, index) {},
+    handleSearchTab(item, index) {
+      if (index === 1) {
+        this.$alert("目前不支持往返", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
+        });
+      }
+    },
 
     // 出发/目标城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表
@@ -91,7 +104,7 @@ export default {
         v.value = v.name.replace("市", "");
         return v;
       });
-      this.selectFirst = newData[0]
+      this.selectFirst = newData[0];
 
       cb(newData);
     },
@@ -110,10 +123,10 @@ export default {
 
     //出发/目标城市输入框失去焦点时触发
     handleBlur(type) {
-      if(Object.keys(this.selectFirst).length === 0) return;
+      if (Object.keys(this.selectFirst).length === 0) return;
 
-      this.form[type+'City'] = this.selectFirst.value;
-      this.form[type+'Code'] = this.selectFirst.sort;
+      this.form[type + "City"] = this.selectFirst.value;
+      this.form[type + "Code"] = this.selectFirst.sort;
     },
 
     // 确认选择日期时触发
@@ -122,32 +135,39 @@ export default {
     },
 
     // 触发和目标城市切换时触发
-    handleReverse() {},
+    handleReverse() {
+      let { destCity,destCode } = this.form;
+      this.form.destCity = this.form.departCity;
+      this.form.destCode = this.form.departCode;
+      this.form.departCity = destCity;
+      this.form.departCode = destCode;
+    },
 
     // 提交表单是触发
     handleSubmit() {
       console.log(this.form);
       let rules = {
         departCity: {
-          message: "请输入出发城市",value: this.form.departCity
+          message: "请输入出发城市",
+          value: this.form.departCity
         },
         destCity: {
-          message: "请输入目标城市",value: this.form.destCity
+          message: "请输入目标城市",
+          value: this.form.destCity
         },
         departDate: {
-          message: "请输入出发时间",value: this.form.departDate
+          message: "请输入出发时间",
+          value: this.form.departDate
         }
       };
 
-      Object.keys(rules).some( v => {
+      Object.keys(rules).some(v => {
         let { message, value } = rules[v];
-        if(!value) {
+        if (!value) {
           this.$message.error(message);
           return true;
         }
-      })
-
-
+      });
     }
   },
   mounted() {}
