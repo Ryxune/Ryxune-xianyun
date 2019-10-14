@@ -35,25 +35,15 @@ export default {
     };
   },
   methods: {
-    // 提交登录
     handleLoginSubmit() {
-      this.$refs.form.validate(v => {
+      this.$refs.form.validate(async v => {
         if (v) {
-          this.$axios({
-            url: "/accounts/login",
-            method: "POST",
-            data: this.form
-          }).then(res => {
-            if (res.status === 200) {
-              this.$message.success("登录成功");
-              this.$store.commit("user/setUserInfo",res.data);
-              // this.$router.push("/")
-            }
-          }).catch( rej => {
-            this.$message.error("用户名或者密码无效.");
-          });
-        } else {
-          this.$message.error("账号或密码不能为空!!");
+          // 提交登录
+          const res = await this.$store.dispatch("user/login", this.form);
+          if (res.status === 200) {
+            this.$message.success("登录成功");
+            this.$router.push("/")
+          }
         }
       });
     }

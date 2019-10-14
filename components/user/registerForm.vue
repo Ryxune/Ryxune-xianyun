@@ -63,20 +63,16 @@ export default {
   },
   methods: {
     // 发送验证码
-    handleSendCaptcha() {
+    async handleSendCaptcha() {
       if (this.form.username.trim() == "") {
         this.$message.error("请先输入手机号码");
         return;
       }
-      this.$axios({
-        url: "/captchas",
-        method: "POST",
-        data: { tel: this.form.username }
-      }).then(res => {
-        if (res.status == 200) {
-          this.$message.success("您的闲云旅游验证码为: " + res.data.code);
-        }
-      });
+      let res = await this.$store.dispatch("user/captcha", this.form.username);
+
+      if (res.status == 200) {
+        this.$message.success("您的闲云旅游验证码为: " + res.data.code);
+      }
     },
 
     // 注册
@@ -84,23 +80,12 @@ export default {
       let { validPassword, ...props } = this.form;
       this.$refs["form"].validate(async valid => {
         if (valid) {
-          let res = await this.$axios({
-            url: "/accounts/register",
-            method: "POST",
-            data: props
-          });
-          console.log(res);
+          let res = await this.$store.dispatch("user/register", props);
 
-          if(res.status === 200) {
+          if (res.status === 200) {
             this.$message.success("注册成功");
-            this.$store.commit('user/setUserInfo',res.data);
             this.$router.push("/");
-          }else {
-            this.$message.fail(res["message"]);
           }
-        } else {
-          this.$message.fail("信息填写错误,请重新填写!");
-          return false;
         }
       });
     }
