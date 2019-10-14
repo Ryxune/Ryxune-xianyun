@@ -127,6 +127,27 @@ export default {
     // 提交表单是触发
     handleSubmit() {
       console.log(this.form);
+      let rules = {
+        departCity: {
+          message: "请输入出发城市",value: this.form.departCity
+        },
+        destCity: {
+          message: "请输入目标城市",value: this.form.destCity
+        },
+        departDate: {
+          message: "请输入出发时间",value: this.form.departDate
+        }
+      };
+
+      Object.keys(rules).some( v => {
+        let { message, value } = rules[v];
+        if(!value) {
+          this.$message.error(message);
+          return true;
+        }
+      })
+
+
     }
   },
   mounted() {}
