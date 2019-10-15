@@ -176,9 +176,13 @@ export default {
           return true;
         }
       });
-      if(!res) {
-        console.log(this.form);
-      }
+      
+      if(res) return;
+
+      this.$router.push({
+        path: "/air/flights",
+        query:this.form
+      })
     }
   },
   mounted() {}
