@@ -1,6 +1,6 @@
 <template>
   <div class="flight-item">
-    <div>
+    <div @click="isShow = !isShow">
       <!-- 显示的机票信息 -->
       <el-row type="flex" align="middle" class="flight-info">
         <el-col :span="6">
@@ -27,19 +27,19 @@
         </el-col>
       </el-row>
     </div>
-    <div class="flight-recommend" v-if="false">
+    <div class="flight-recommend" v-if="isShow">
       <!-- 隐藏的座位信息列表 -->
-      <el-row type="flex" justify="space-between" align="middle">
+      <el-row type="flex" justify="space-between" align="middle" v-for="(item,index) in data.seat_infos" :key="index">
         <el-col :span="4">低价推荐</el-col>
         <el-col :span="20">
           <el-row type="flex" justify="space-between" align="middle" class="flight-sell">
             <el-col :span="16" class="flight-sell-left">
-              <span>经济舱</span> | 上海一诺千金航空服务有限公司
+              <span>{{item.name}}</span> | {{item.supplierName}}
             </el-col>
-            <el-col :span="5" class="price">￥1345</el-col>
+            <el-col :span="5" class="price">￥{{item.settle_price}}</el-col>
             <el-col :span="3" class="choose-button">
               <el-button type="warning" size="mini">选定</el-button>
-              <p>剩余：83</p>
+              <p>剩余：{{item.discount}}</p>
             </el-col>
           </el-row>
         </el-col>
@@ -56,6 +56,11 @@ export default {
       type: Object,
       // 默认是空数组
       default: {}
+    }
+  },
+  data() {
+    return {
+      isShow: true
     }
   },
   computed: {

@@ -41,7 +41,6 @@ export default {
       params: this.$route.query
     }).then(res => {
       this.flightsData = res.data;
-      console.log(this.flightsData.flights);
     });
   },
   data() {
