@@ -12,6 +12,21 @@
         </div>
 
         <!-- 航班信息 -->
+        <!-- <div>
+          <FlightsItem v-for="(item,index) in currentFlightsData" :key="index" :data="item" />
+        </div>-->
+
+        <!-- 加载中 -->
+        <el-table
+          v-loading="loading"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(255, 255, 255, 0.8)"
+          style="width: 100%; height: 200px"
+          :data="flightsData.flights"
+          v-show="!(!loading && this.flightsData.flights.length)"
+        ></el-table>
+
         <div>
           <FlightsItem v-for="(item,index) in currentFlightsData" :key="index" :data="item" />
         </div>
@@ -27,6 +42,14 @@
           :total="total"
           v-if="total"
         ></el-pagination>
+
+        <!-- 无航班信息提示 -->
+        <!-- <div
+          v-if="flightsData.flights.length === 0 && !loading"
+          style="padding: 50px; text-align:center"
+        >该航班暂无数据
+        </div> -->
+
       </div>
 
       <!-- 侧边栏 -->
@@ -54,23 +77,29 @@ export default {
     }).then(res => {
       this.flightsData = res.data;
       this.total = this.flightsData.flights.length;
+      this.loading = false;
     });
   },
   data() {
     return {
       flightsData: {
-        flights: []
+        flights: [
+          {arr_time:"",
+          dep_time:""}
+        ]
       },
       pageIndex: 1,
       pageSize: 5,
-      total: 0
+      total: 0,
+      loading: true
     };
   },
   computed: {
     currentFlightsData() {
-      // console.log(this.flightsData.flights);
-      // return;
-      let res = this.flightsData.flights.slice((this.pageIndex-1) * this.pageSize,this.pageIndex*this.pageSize);
+      let res = this.flightsData.flights.slice(
+        (this.pageIndex - 1) * this.pageSize,
+        this.pageIndex * this.pageSize
+      );
       return res;
     }
   },

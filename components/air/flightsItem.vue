@@ -1,10 +1,10 @@
 <template>
-  <div class="flight-item">
+  <div class="flight-item" :style="opacity">
     <div @click="isShow = !isShow">
       <!-- 显示的机票信息 -->
       <el-row type="flex" align="middle" class="flight-info">
         <el-col :span="6">
-          <span>{{data.airline_name}} {{data.flight_no}}</span> MU5316
+          <span>{{data.airline_name}} {{data.flight_no}}</span>
         </el-col>
         <el-col :span="12">
           <el-row type="flex" justify="space-between" class="flight-info-center">
@@ -29,12 +29,19 @@
     </div>
     <div class="flight-recommend" v-if="isShow">
       <!-- 隐藏的座位信息列表 -->
-      <el-row type="flex" justify="space-between" align="middle" v-for="(item,index) in data.seat_infos" :key="index">
+      <el-row
+        type="flex"
+        justify="space-between"
+        align="middle"
+        v-for="(item,index) in data.seat_infos"
+        :key="index"
+      >
         <el-col :span="4">低价推荐</el-col>
         <el-col :span="20">
           <el-row type="flex" justify="space-between" align="middle" class="flight-sell">
             <el-col :span="16" class="flight-sell-left">
-              <span>{{item.name}}</span> | {{item.supplierName}}
+              <span>{{item.name}}</span>
+              | {{item.supplierName}}
             </el-col>
             <el-col :span="5" class="price">￥{{item.settle_price}}</el-col>
             <el-col :span="3" class="choose-button">
@@ -60,8 +67,9 @@ export default {
   },
   data() {
     return {
-      isShow: false
-    }
+      isShow: false,
+      opacity: {opacity:0}
+    };
   },
   computed: {
     cost_time() {
@@ -72,10 +80,15 @@ export default {
       if (arr[0] < dep[0]) {
         arr[0] = +arr[0] + 24;
       }
-      let minutes = (arr[0]*60+ +arr[1])-(dep[0]*60+ +dep[1]);
-      let hours = Math.floor(minutes/60);
+      let minutes = arr[0] * 60 + +arr[1] - (dep[0] * 60 + +dep[1]);
+      let hours = Math.floor(minutes / 60);
       minutes = minutes % 60;
+      console.log(this.opacity.opacity);
 
+      // 不知何时才能获取到真正的数据,这里是为了不显示没有数据时显示机票列表布局
+      setTimeout(()=>{
+        this.opacity.opacity = 1;
+      },1600)
       return `${hours}小时${minutes}分`;
     }
   }
