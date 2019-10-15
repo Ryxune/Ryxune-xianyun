@@ -13,8 +13,20 @@
 
         <!-- 航班信息 -->
         <div>
-          <FlightsItem v-for="(item,index) in flightsData.flights" :key="index" :data="item" />
+          <FlightsItem v-for="(item,index) in currentFlightsData" :key="index" :data="item" />
         </div>
+
+        <!-- 分页 -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageIndex"
+          :page-sizes="[5, 10, 15, 20]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          v-if="total"
+        ></el-pagination>
       </div>
 
       <!-- 侧边栏 -->
@@ -41,12 +53,34 @@ export default {
       params: this.$route.query
     }).then(res => {
       this.flightsData = res.data;
+      this.total = this.flightsData.flights.length;
     });
   },
   data() {
     return {
-      flightsData: {}
+      flightsData: {
+        flights: []
+      },
+      pageIndex: 1,
+      pageSize: 5,
+      total: 0
     };
+  },
+  computed: {
+    currentFlightsData() {
+      // console.log(this.flightsData.flights);
+      // return;
+      let res = this.flightsData.flights.slice((this.pageIndex-1) * this.pageSize,this.pageIndex*this.pageSize);
+      return res;
+    }
+  },
+  methods: {
+    handleSizeChange(val) {
+      this.pageSize = val;
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+    }
   }
 };
 </script>
