@@ -4,7 +4,7 @@
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <div></div>
+        <FlightsFilters :data="cachaData" @pushData="handleFilterData"/>
 
         <!-- 航班头部布局 -->
         <div>
@@ -48,8 +48,7 @@
           v-if="flightsData.flights.length === 0 && !loading"
           style="padding: 50px; text-align:center"
         >该航班暂无数据
-        </div> -->
-
+        </div>-->
       </div>
 
       <!-- 侧边栏 -->
@@ -64,11 +63,13 @@
 import moment from "moment";
 import FlightsListHead from "@/components/air/flightsListHead.vue";
 import FlightsItem from "@/components/air/flightsItem.vue";
+import FlightsFilters from "@/components/air/flightsFilters.vue";
 
 export default {
   components: {
     FlightsListHead,
-    FlightsItem
+    FlightsItem,
+    FlightsFilters
   },
   mounted() {
     this.$axios({
@@ -78,20 +79,23 @@ export default {
       this.flightsData = res.data;
       this.total = this.flightsData.flights.length;
       this.loading = false;
+      this.cachaData = {...res.data};
     });
   },
   data() {
     return {
       flightsData: {
-        flights: [
-          {arr_time:"",
-          dep_time:""}
-        ]
+        flights: [{ arr_time: "", dep_time: "" }]
       },
       pageIndex: 1,
       pageSize: 5,
       total: 0,
-      loading: true
+      loading: true,
+      cachaData: {
+        flights: [],
+        info: {},
+        options: {}
+      }
     };
   },
   computed: {
@@ -109,6 +113,12 @@ export default {
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
+    },
+    handleFilterData(data) {
+
+      this.flightsData.flights = data;
+      this.total = data.length;
+      this.pageIndex = 1;
     }
   }
 };

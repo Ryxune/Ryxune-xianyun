@@ -90,7 +90,6 @@ export default {
     // 出发/目标城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表
     async querySearch(value, cb) {
-      console.log("querySearch");
       if (!value) {
         cb([]);
         return;
@@ -144,7 +143,7 @@ export default {
       this.form.departCode = destCode;
     },
 
-    // 提交表单是触发
+    // 提交表单时触发
     handleSubmit() {
       let rules = {
         departCity: {
