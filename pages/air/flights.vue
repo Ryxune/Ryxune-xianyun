@@ -4,7 +4,7 @@
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <FlightsFilters :data="cachaData" @pushData="handleFilterData"/>
+        <FlightsFilters :data="cachaData" @pushData="handleFilterData" />
 
         <!-- 航班头部布局 -->
         <div>
@@ -54,6 +54,7 @@
       <!-- 侧边栏 -->
       <div class="aside">
         <!-- 侧边栏组件 -->
+        <FlightsAside />
       </div>
     </el-row>
   </section>
@@ -64,23 +65,22 @@ import moment from "moment";
 import FlightsListHead from "@/components/air/flightsListHead.vue";
 import FlightsItem from "@/components/air/flightsItem.vue";
 import FlightsFilters from "@/components/air/flightsFilters.vue";
+import FlightsAside from "@/components/air/flightsAside.vue";
 
 export default {
   components: {
     FlightsListHead,
     FlightsItem,
-    FlightsFilters
+    FlightsFilters,
+    FlightsAside
+  },
+  watch: {
+    $route() {
+      this.dataList();
+    }
   },
   mounted() {
-    this.$axios({
-      url: "/airs",
-      params: this.$route.query
-    }).then(res => {
-      this.flightsData = res.data;
-      this.total = this.flightsData.flights.length;
-      this.loading = false;
-      this.cachaData = {...res.data};
-    });
+    this.dataList();
   },
   data() {
     return {
@@ -108,6 +108,17 @@ export default {
     }
   },
   methods: {
+    dataList() {
+      this.$axios({
+        url: "/airs",
+        params: this.$route.query
+      }).then(res => {
+        this.flightsData = res.data;
+        this.total = this.flightsData.flights.length;
+        this.loading = false;
+        this.cachaData = { ...res.data };
+      });
+    },
     handleSizeChange(val) {
       this.pageSize = val;
     },
@@ -115,7 +126,6 @@ export default {
       this.pageIndex = val;
     },
     handleFilterData(data) {
-
       this.flightsData.flights = data;
       this.total = data.length;
       this.pageIndex = 1;
