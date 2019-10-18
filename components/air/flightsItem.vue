@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import {computeTime} from "@/utils/utils";
 export default {
   props: {
     // 数据
@@ -70,27 +71,12 @@ export default {
   data() {
     return {
       isShow: false,
-      opacity: {opacity:0}
+      opacity: {opacity:1}
     };
   },
   computed: {
     cost_time() {
-      let { arr_time, dep_time } = this.data;
-      let arr = arr_time.split(":");
-      let dep = dep_time.split(":");
-
-      if (arr[0] < dep[0]) {
-        arr[0] = +arr[0] + 24;
-      }
-      let minutes = arr[0] * 60 + +arr[1] - (dep[0] * 60 + +dep[1]);
-      let hours = Math.floor(minutes / 60);
-      minutes = minutes % 60;
-
-      // 不知何时才能获取到真正的数据,这里是为了不显示没有数据时显示机票列表布局
-      setTimeout(()=>{
-        this.opacity.opacity = 1;
-      },1600)
-      return `${hours}小时${minutes}分`;
+      return computeTime(this.data.arr_time,this.data.dep_time);
     }
   }
 };

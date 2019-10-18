@@ -2,20 +2,42 @@
   <div class="container">
     <el-row type="flex" justify="space-between">
       <!-- 订单表单 -->
-      <OrderForm />
+      <OrderForm @getTicketDetail="getTicketDetail" @getAllPrice="getAllPrice"/>
 
       <!-- 侧边栏 -->
-      <div class="aside"></div>
+      <div class="aside">
+        <OrderAside :data="infoData" :allPrice="allPrice"/>
+      </div>
     </el-row>
   </div>
 </template>
 
 <script>
 import OrderForm from "@/components/air/orderForm.vue";
+import OrderAside from "@/components/air/orderAside.vue";
 
 export default {
   components: {
-    OrderForm
+    OrderForm,
+    OrderAside
+  },
+  data() {
+    return {
+      infoData: {
+        insurances: [],
+        seat_infos: {}
+      },
+      allPrice: 0
+    }
+  },
+
+  methods: {
+    getAllPrice(price) {
+      this.allPrice = price;
+    },
+    getTicketDetail(detail) {
+      this.infoData = detail;
+    }
   }
 };
 </script>

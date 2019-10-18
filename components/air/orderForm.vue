@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+    <input type="hidden" :value="allPrice" >
     <div class="air-column">
       <h2>乘机人</h2>
       <el-form class="member-info">
@@ -31,7 +32,11 @@
       <h2>保险</h2>
       <div>
         <div class="insurance-item" v-for="(item,index) in ticketDetail.insurances" :key="index">
-          <el-checkbox :label="`${item.type}：￥${item.price}/份×${users.length}  最高赔付${item.compensation}元`" border></el-checkbox>
+          <el-checkbox
+            :label="item.id"
+            border
+            v-model="insurances"
+          >{{`${item.type}：￥${item.price}/份×${users.length}  最高赔付${item.compensation}元`}}</el-checkbox>
         </div>
       </div>
     </div>
@@ -41,11 +46,11 @@
       <div class="contact">
         <el-form label-width="60px">
           <el-form-item label="姓名">
-            <el-input></el-input>
+            <el-input v-model="contactName"></el-input>
           </el-form-item>
 
           <el-form-item label="手机">
-            <el-input placeholder="请输入内容">
+            <el-input placeholder="请输入内容" v-model="contactPhone">
               <template slot="append">
                 <el-button @click="handleSendCaptcha">发送验证码</el-button>
               </template>
@@ -53,7 +58,7 @@
           </el-form-item>
 
           <el-form-item label="验证码">
-            <el-input></el-input>
+            <el-input v-model="captcha"></el-input>
           </el-form-item>
         </el-form>
         <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
@@ -69,8 +74,12 @@ export default {
       users: [
         {username:"",id:""}
       ],
+      //机票详情
       ticketDetail: {},
-      insurances: []
+      insurances: [],
+      contactPhone: "",
+      contactName: "",
+      captcha: "",
     }
   },
   mounted() {
@@ -79,14 +88,36 @@ export default {
       url: "/airs/" + id,
       params: {seat_xid}
     }).then(res => {
-      console.log(res);
+      // console.log(res.data);
       this.ticketDetail = res.data;
+      this.$emit("getTicketDetail",this.ticketDetail);
     })
+  },
+  computed: {
+    allPrice() {
+
+      if(!this.ticketDetail.seat_infos) return;
+
+      let price = 0;
+      let len = this.users.length;
+      price +=this.ticketDetail.seat_infos.org_settle_price * len;
+
+      this.insurances.forEach(v => {
+        price += this.ticketDetail.insurances[v-1].price * len;
+      });
+
+      price += this.ticketDetail.airport_tax_audlet * len;
+
+      this.$emit("getAllPrice",price);
+
+      return price;
+
+    }
   },
   methods: {
     // 添加乘机人
     handleAddUsers() {
-      this.users.push({username:"",id:""});
+      this.users.push({contactPhone:"",id:""});
     },
 
     // 移除乘机人
@@ -95,10 +126,44 @@ export default {
     },
 
     // 发送手机验证码
-    handleSendCaptcha() {},
+    async handleSendCaptcha() {
+      if (this.contactPhone.trim() == "") {
+        this.$message.error("请先输入手机号码");
+        return;
+      }
+      let res = await this.$store.dispatch("user/captcha", this.contactPhone);
+
+      if (res.status == 200) {
+        this.$message.success("您的闲云旅游验证码为: " + res.data.code);
+      }
+    },
 
     // 提交订单
-    handleSubmit() {}
+    handleSubmit() {
+      let {id,seat_xid} = this.$route.query;
+      let data = {
+        users:this.users,
+        insurances: this.insurances,
+        contactName: this.contactName,
+        contactPhone: this.contactPhone,
+        invoice:false,
+        seat_xid,
+        air:id,
+        captcha: this.captcha
+
+      }
+
+      this.$axios({
+        url: "/airorders",
+        method: "POST",
+        data,
+        headers: {
+          Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+        }
+      }).then( res => {
+        console.log(111,res);
+      })
+    }
   }
 };
 </script>
