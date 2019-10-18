@@ -152,6 +152,7 @@ export default {
         captcha: this.captcha
 
       }
+      // this.$message.success("正在生成订单!请稍后...");
 
       this.$axios({
         url: "/airorders",
@@ -162,6 +163,17 @@ export default {
         }
       }).then( res => {
         console.log(111,res);
+        if(res.status === 200) {
+          let {data,message} = res.data;
+          this.$message.success(message);
+          this.$router.push({
+            path:"/air/pay",
+            query: {
+              id: data.id
+            }
+
+          })
+        }
       })
     }
   }
