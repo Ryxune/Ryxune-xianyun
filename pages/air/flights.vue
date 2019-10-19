@@ -4,7 +4,7 @@
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <FlightsFilters :data="cachaData" @pushData="handleFilterData" />
+        <FlightsMutiFilters :data="cachaData" @pushData="handleFilterData" />
 
         <!-- 航班头部布局 -->
         <div>
@@ -64,14 +64,14 @@
 import moment from "moment";
 import FlightsListHead from "@/components/air/flightsListHead.vue";
 import FlightsItem from "@/components/air/flightsItem.vue";
-import FlightsFilters from "@/components/air/flightsFilters.vue";
+import FlightsMutiFilters from "@/components/air/flightsMutiFilters.vue";
 import FlightsAside from "@/components/air/flightsAside.vue";
 
 export default {
   components: {
     FlightsListHead,
     FlightsItem,
-    FlightsFilters,
+    FlightsMutiFilters,
     FlightsAside
   },
   watch: {

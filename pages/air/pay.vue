@@ -38,14 +38,45 @@ export default {
       }).then(res => {
         console.log(res);
         this.payData = res.data;
-        new QRCode(document.getElementById("qrcode"), this.payData.payInfo.code_url);
+        new QRCode(
+          document.getElementById("qrcode"),
+          this.payData.payInfo.code_url
+        );
       });
-    },10);
+
+      //订单是否支付成功轮询
+      this.timer = setInterval(async () => {
+        let res  = await this.$axios({
+          url: "/airorders/checkpay",
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+          },
+          data: {
+            id,
+            nonce_str: this.payData.price,
+            out_strade_no: this.payData.orderNo
+          }
+        });
+
+
+        //支付成功后停止轮询
+        let { statusTxt } = res.data;
+        if (statusTxt === "支付完成") {
+          this.$message.success(statusTxt);
+          clearInterval(this.timer);
+        }
+      }, 3000);
+    }, 10);
   },
   data() {
     return {
-      payData: {}
+      payData: {},
+      timer: null
     };
+  },
+  destroyed() {
+    clearInterval(this.timer);
   }
 };
 </script>
