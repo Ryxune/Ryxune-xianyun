@@ -40,15 +40,17 @@
     <div class="air-sale">
       <el-row type="flex" class="air-sale-pic" justify="space-between">
         <el-col :span="6" v-for="(item, index) in sales" :key="index">
-          <nuxt-link
-            :to="`/air/flights?departCity=${item.departCity}&departCode=${item.departCode}&destCity=${item.destCity}&destCode=${item.destCode}&departDate=${item.departDate}`"
-          >
-            <img :src="item.cover" />
-            <el-row class="layer-bar" type="flex" justify="space-between">
-              <span>{{item.departCity}}-{{item.destCity}}</span>
-              <span>￥{{item.price}}</span>
-            </el-row>
-          </nuxt-link>
+          <div class="event" @click="pushHistory(item)">
+            <nuxt-link
+              :to="`/air/flights?departCity=${item.departCity}&departCode=${item.departCode}&destCity=${item.destCity}&destCode=${item.destCode}&departDate=${item.departDate}`"
+            >
+              <img :src="item.cover" />
+              <el-row class="layer-bar" type="flex" justify="space-between">
+                <span>{{item.departCity}}-{{item.destCity}}</span>
+                <span>￥{{item.price}}</span>
+              </el-row>
+            </nuxt-link>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -63,14 +65,20 @@ export default {
   },
   mounted() {
     this.$axios({
-      url: '/airs/sale',
+      url: "/airs/sale"
     }).then(res => {
       this.sales = res.data.data;
-    })
+    });
   },
   data() {
     return {
       sales: []
+    };
+  },
+  methods: {
+    pushHistory(info) {
+      console.log(222, info);
+      this.$store.commit("air/setHistory", info);
     }
   }
 };

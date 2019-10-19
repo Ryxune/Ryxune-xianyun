@@ -105,59 +105,7 @@ export default {
     }
   },
   methods: {
-    // 选择机场时候触发
-    handleAirport(value) {
-      this.flightTimes = "";
-      this.company = "";
-      this.airSize = "";
-      let res = this.data.flights.filter(v => {
-        if (v.org_airport_name === value) return true;
-      });
-      this.$emit("pushData", res);
-    },
-
-    // 选择出发时间时触发
-    handleFlightTimes(value) {
-      this.airport = "";
-      this.company = "";
-      this.airSize = "";
-      let start = value.split(",")[0] - 0;
-      let end = value.split(",")[1] - 0;
-
-      let res = this.data.flights.filter(v => {
-        let startTime = v.dep_time.split(":")[0] - 0;
-
-        if (v.dep_time.split(":")[1] > 0) {
-          startTime += 1;
-        }
-
-        if (startTime >= start && startTime <= end) return true;
-      });
-      this.$emit("pushData", res);
-    },
-
-    // 选择航空公司时触发
-    handleCompany(value) {
-      this.airport = "";
-      this.flightTimes = "";
-      this.airSize = "";
-      let res = this.data.flights.filter(v => {
-        if (v.airline_name === value) return true;
-      });
-      this.$emit("pushData", res);
-    },
-
-    // 选择机型时触发
-    handleAirSize(value) {
-      this.airport = "";
-      this.flightTimes = "";
-      this.company = "";
-      let res = this.data.flights.filter(v => {
-        if (v.plane_size === value) return true;
-      });
-      this.$emit("pushData", res);
-    },
-
+   
     // 撤销条件时触发
     handleFiltersCancel() {
       this.airport = "";
